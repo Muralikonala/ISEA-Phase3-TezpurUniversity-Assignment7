@@ -55,7 +55,7 @@ Click Connect.
 
 ## Sample Screenshots
 
-(Add screenshots here)
+Are attach to the git folder
 
 ---
 
