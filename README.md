@@ -186,11 +186,3 @@ Captured Operations:
 **Murali Konala**
 
 B.Tech Computer Science and Engineering
-
-GitHub Repository:
-
-```
-GitHub Repository:
-
-ISEAPhase3-TezpurUniversity-MultiClientChat
-```
