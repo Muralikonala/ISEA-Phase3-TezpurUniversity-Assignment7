@@ -4,8 +4,8 @@
 
 ### Student Details
 
-- **Name:** Murali Konala
-- **Roll Number:** 323506402101
+- **Name:** Konala S V Murali Ramakrishna Reddy
+- **Roll Number:** 323506402241
 - **Course:** B.Tech CSE
 - **Assignment:** Phase 3 - Assignment 8
 
