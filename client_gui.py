@@ -1,10 +1,16 @@
 import socket
 import threading
+import json
 import tkinter as tk
 from tkinter import messagebox
 from tkinter.scrolledtext import ScrolledText
 
-PORT = 5000
+# Load configuration
+with open("config.json", "r") as file:
+    config = json.load(file)
+
+PORT = config["PORT"]
+BUFFER_SIZE = config["BUFFER_SIZE"]
 
 
 class LoginWindow:
@@ -52,14 +58,14 @@ class LoginWindow:
             self.client.connect((ip, PORT))
 
             self.client.send(f"LOGIN|{username}|{password}".encode())
-            response = self.client.recv(1024).decode()
+            response = self.client.recv(BUFFER_SIZE).decode().strip()
             
             if not response.startswith("LOGIN_SUCCESS"):
                 messagebox.showerror("Login Failed", response)
                 self.client.close()
                 return
 
-            self.client.send("READY".encode())
+            self.client.send("READY\n".encode())
             self.root.destroy()
             ChatWindow(self.client, username)
 
@@ -80,7 +86,7 @@ class LoginWindow:
             client.connect((ip, PORT))
             client.send(f"REGISTER|{username}|{password}".encode())
             
-            response = client.recv(1024).decode()
+            response = client.recv(BUFFER_SIZE).decode().strip()
             messagebox.showinfo("Registration", response)
             client.close()
 
@@ -126,12 +132,11 @@ class ChatWindow:
 
         self.message_entry.bind("<Return>", lambda event: self.send_message())
 
-        self.display_message("Login Successful. Fetching chat data...")
+        self.display_message("SYSTEM: Login Successful. Fetching chat data...")
 
         self.receive_thread = threading.Thread(target=self.receive_messages, daemon=True)
         self.receive_thread.start()
 
-        self.refresh_users()
         self.root.protocol("WM_DELETE_WINDOW", self.disconnect)
         self.root.mainloop()
 
@@ -146,56 +151,82 @@ class ChatWindow:
         if message == "":
             return
         try:
-            self.client.send(message.encode())
-            self.display_message(f"You : {message}")
+            self.client.send((message + "\n").encode())
+            self.display_message(f"You: {message}")
             self.message_entry.delete(0, tk.END)
-        except Exception:
-            messagebox.showerror("Error", "Unable to send message.")
+        except BrokenPipeError:
+            messagebox.showerror("Disconnected", "Server connection lost.")
+        except OSError:
+            messagebox.showerror("Socket Error", "Connection closed.")
+        except Exception as e:
+            messagebox.showerror("Error", str(e))
 
     def receive_messages(self):
+        buffer = ""
         while True:
             try:
-                message = self.client.recv(1024).decode()
-                if not message:
+                data = self.client.recv(BUFFER_SIZE).decode()
+                if not data:
                     break
 
-                if message == "SESSION_TIMEOUT":
-                    messagebox.showwarning(
-                        "Session Timeout",
-                        "You were disconnected due to inactivity."
-                    )
-                    self.root.destroy()
-                    break
-                
-                if message.strip().startswith("Online Users"):
-                    self.user_list.delete(0, tk.END)
-                    for line in message.split("\n"):
-                        line = line.strip()
-                        if line and line != "Online Users" and not line.startswith("---"):
-                            self.user_list.insert(tk.END, line)
-                else:
-                    self.display_message(message)
-            except Exception:
+                buffer += data
+
+                while "\n" in buffer:
+                    message, buffer = buffer.split("\n", 1)
+
+                    if message.startswith("USERLIST|"):
+                        users_str = message.split("|", 1)[1]
+                        users = users_str.split(",") if users_str else []
+                        self.user_list.delete(0, tk.END)
+                        for user in users:
+                            if user.strip():
+                                self.user_list.insert(tk.END, user.strip())
+                    
+                    elif message.startswith("CHAT|"):
+                        _, sender, text = message.split("|", 2)
+                        self.display_message(f"{sender}: {text}")
+                    
+                    elif message.startswith("SYSTEM|"):
+                        self.display_message(message.split("|", 1)[1])
+                    
+                    elif message.startswith("TIMEOUT|"):
+                        messagebox.showwarning("Timeout", "Disconnected due to inactivity.")
+                        self.disconnect()
+                        break
+                    
+                    elif message.startswith("PRIVATE|"):
+                        _, sender, text = message.split("|", 2)
+                        self.display_message(f"[PRIVATE] {sender}: {text}")
+                    
+                    else:
+                        # Fallback for unexpected messages
+                        if message.strip():
+                            self.display_message(message)
+            
+            except ConnectionResetError:
+                messagebox.showerror("Connection Lost", "Server disconnected.")
+                break
+            except OSError:
+                break
+            except Exception as e:
+                print(e)
                 break
 
-    def refresh_users(self):
-        try:
-            self.client.send("/list".encode())
-        except Exception:
-            return
-        self.root.after(3000, self.refresh_users)
-
     def disconnect(self):
+        try:
+            # We append \n here to match the new server framing rule
+            self.client.send("DISCONNECT\n".encode())
+        except (BrokenPipeError, OSError):
+            pass
+        except Exception:
+            pass
+            
         try:
             self.client.close()
         except Exception:
             pass
+            
         self.root.destroy()
-        
-    def update_user_list(self, users):
-        self.user_list.delete(0, tk.END)
-        for user in users:
-            self.user_list.insert(tk.END, user)
 
 
 if __name__ == "__main__":
