@@ -1,46 +1,43 @@
-# Advanced Multi-Client Chat Application
+# ISEAPhase3-TezpurUniversity-Assignment8
 
-## Overview
+## GUI Based Multi-Client Chat Application Using TCP
 
-This project is an Advanced Multi-Client Chat Application developed in Python using Socket Programming and Tkinter GUI. It enables multiple users to communicate over a TCP network while implementing authentication, security features, message history, and session management.
+### Student Details
+
+- **Name:** Murali Konala
+- **Roll Number:** 323506402101
+- **Course:** B.Tech CSE
+- **Assignment:** Phase 3 - Assignment 8
+
+---
+
+## Project Description
+
+This project is a GUI-based Multi-Client Chat Application developed using Python Socket Programming and Tkinter. It supports multiple clients communicating simultaneously through a TCP server while providing authentication, private messaging, chat history, session management, and performance monitoring.
 
 ---
 
 ## Features
 
-### User Authentication
 - User Registration
-- Secure Login
-- SHA-256 Password Hashing
-- Duplicate Login Prevention
-- Maximum 5 Failed Login Attempts
-- Account Lock after Multiple Failed Attempts
-
-### Chat Features
-- Multi-Client Chat
+- User Login Authentication
+- Password Hashing (SHA-256)
+- GUI Chat Interface (Tkinter)
+- Multi-Client Communication
 - Broadcast Messaging
 - Private Messaging
-- Online User List
-- GUI-Based Client
-- Disconnect Button
-
-### Security Features
-- Password Encryption (SHA-256)
-- Security Log Generation
-- Input Validation
-- Session Timeout (Automatic Logout)
-- Login and Logout Logging
-
-### Data Storage
-- User Database (users.csv)
-- Chat History (chat_history.csv)
-- Security Log (security_log.txt)
-
-### Additional Features
-- Displays Last 5 Messages After Login
-- Automatic Online User Refresh
-- TCP Socket Communication
-- Multi-threaded Server
+- Online Users List
+- Chat History Storage (CSV)
+- Session Timeout
+- Graceful Client Disconnection
+- Connection Management
+- Improved Exception Handling
+- Configuration Management using `config.json`
+- Thread-safe Scalability Enhancement
+- Performance Monitoring
+- CPU & Memory Usage Measurement
+- Delay & Throughput Measurement
+- Performance Graph Generation
 
 ---
 
@@ -48,42 +45,53 @@ This project is an Advanced Multi-Client Chat Application developed in Python us
 
 - Python 3
 - Socket Programming
-- Tkinter GUI
-- Threading
-- CSV File Handling
-- Hashlib (SHA-256)
-- Regular Expressions
-- Wireshark (Network Packet Analysis)
+- Tkinter
+- Multithreading
+- JSON
+- CSV
+- psutil
+- pandas
+- matplotlib
+- Wireshark
 
 ---
 
 ## Project Structure
 
 ```
-assignment7/
+ISEAPhase3-TezpurUniversity-Assignment8/
 │
 ├── server.py
 ├── client_gui.py
+├── config.json
 ├── users.csv
 ├── chat_history.csv
 ├── security_log.txt
+├── performance_results.csv
+├── generate_graphs.py
+├── delay_graph.png
+├── throughput_graph.png
+├── cpu_graph.png
+├── memory_graph.png
 ├── README.md
+└── report.pdf
 ```
 
 ---
 
 ## Installation
 
-Clone the repository
+Install required packages:
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/Assignment7.git
+pip install psutil pandas matplotlib
 ```
 
-Move into the project directory
+Ubuntu:
 
 ```bash
-cd Assignment7
+sudo apt install python3-psutil
+pip3 install pandas matplotlib
 ```
 
 ---
@@ -102,144 +110,73 @@ python3 server.py
 python3 client_gui.py
 ```
 
-Run multiple client instances to simulate multiple users.
-
 ---
 
-## User Registration
-
-1. Enter Server IP
-2. Enter Username
-3. Enter Password
-4. Click Register
-
-The password is securely stored using SHA-256 hashing.
-
----
-
-## Login
-
-1. Enter registered Username
-2. Enter Password
-3. Click Login
-
-The application prevents duplicate logins and limits failed login attempts.
-
----
-
-## Security Features
-
-### Password Hashing
-
-Passwords are stored using SHA-256 encryption.
-
-### Failed Login Protection
-
-- Maximum 5 failed attempts
-- Account locking after repeated failures
-
-### Input Validation
-
-- Username must contain only letters, numbers, and underscores.
-- Username minimum length: 3 characters.
-- Password minimum length: 6 characters.
-
-### Security Logging
+## Performance Evaluation
 
 The application records:
 
-- Registration Success
-- Registration Failure
-- Login Success
-- Login Failure
-- Logout
-- Session Timeout
-- Account Lock
+- Message Delay
+- Throughput
+- CPU Usage
+- Memory Usage
 
----
-
-## Chat Features
-
-### Broadcast Message
-
-Send a message to all connected users.
-
-Example
+Results are stored in:
 
 ```
-Hello Everyone
+performance_results.csv
 ```
 
+Graphs generated:
+
+- Delay vs Connected Clients
+- Throughput vs Connected Clients
+- CPU Usage vs Connected Clients
+- Memory Usage vs Connected Clients
+
 ---
 
-### Private Message
+## Wireshark Verification
 
-Use
+Display filter:
 
 ```
-/msg username message
+tcp.port == 5000
 ```
 
-Example
+Captured Operations:
 
-```
-/msg lucky Hello
-```
-
----
-
-### Online Users
-
-The application displays all connected users in the right-side panel.
-
----
-
-### Last Five Messages
-
-After successful login, the server automatically displays the user's last five sent messages.
-
----
-
-### Session Timeout
-
-Inactive users are automatically disconnected after the configured timeout period.
-
----
-
-## Wireshark Analysis
-
-The application communicates using:
-
-- Protocol: TCP
-- Port: 5000
-
-Packet captures can be monitored using Wireshark on the loopback (`lo`) interface.
-
----
-
-## Screenshots
-
-Include screenshots of:
-
-- Registration
+- TCP Handshake
 - Login
-- Broadcast Chat
-- Private Chat
-- Online Users
-- Security Log
-- Session Timeout
-- Wireshark Packet Capture
+- Broadcast Message
+- Private Message
+- Client Disconnect
+
+---
+
+## Assignment Tasks Completed
+
+| Task | Status |
+|------|--------|
+| Connection Management | ✅ |
+| Reliability Enhancement | ✅ |
+| Scalability Enhancement | ✅ |
+| Configuration Management | ✅ |
+| Performance Evaluation | ✅ |
+| Wireshark Verification | ✅ |
+| GitHub Update | ✅ |
+| Handwritten Reflection | ✅ |
 
 ---
 
 ## Future Improvements
 
 - End-to-End Encryption
-- SQLite Database
-- Group Chat
 - File Sharing
-- Emoji Support
-- Voice Messaging
+- Voice Chat
+- Group Chat
+- Database Integration
+- Automatic Reconnection
 - Message Delivery Status
 
 ---
@@ -248,8 +185,12 @@ Include screenshots of:
 
 **Murali Konala**
 
-B.Tech Computer Science Engineering
+B.Tech Computer Science and Engineering
 
-Python Socket Programming Assignment
+GitHub Repository:
 
+```
+GitHub Repository:
+
+ISEAPhase3-TezpurUniversity-MultiClientChat
 ```
